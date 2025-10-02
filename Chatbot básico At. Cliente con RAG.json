@@ -1,0 +1,273 @@
+{
+  "name": "Chatbot básico At. Cliente con RAG",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "mode": "webhook",
+        "options": {}
+      },
+      "id": "fe54ba03-1eee-4254-afe3-c3753f60e7a8",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -320,
+        -224
+      ],
+      "webhookId": "f61e1b9f-0f81-46b8-828e-668bfeeeb3eb"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "804bf2ad-6b96-48f5-a8db-0b49c9a7b17c",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        0
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "ppZCBs5FHvX2ABEa",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "56e7a221-1f50-415e-9f92-3d3efa3ed770",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        344,
+        208
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "ppZCBs5FHvX2ABEa",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableName": {
+          "__rl": true,
+          "value": "documents_eskailet",
+          "mode": "list",
+          "cachedResultName": "documents_eskailet"
+        },
+        "options": {
+          "queryName": "match_documents_eskailet"
+        }
+      },
+      "id": "9131a082-f62b-4de7-9b53-087dc1c3d15d",
+      "name": "Supabase Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        56,
+        208
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EBg2qq1Kl0wXgeVI",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "27475513-cca2-459a-80c4-6dcdd313bbb8",
+      "name": "Embeddings OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        136,
+        416
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "ppZCBs5FHvX2ABEa",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "eskailet_data",
+        "description": "Retrieve information"
+      },
+      "id": "7ca36c1a-8ed4-4426-a8f9-d36007beedfa",
+      "name": "Base de datos",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        160,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -224,
+        288
+      ],
+      "id": "6b9a0595-9d54-4c4e-9347-780c1dfabe38",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# 🤖 ASISTENTE DE ATENCIÓN AL CLIENTE \n\nEres un asistente virtual de atención al cliente para NOMBRE EMPRESA, empresa especializada en AÑADIR ESPECIALIDAD.\n\n## 🎯 TU FUNCIÓN\nResponder preguntas frecuentes de los usuarios usando únicamente la información de la base de datos vectorial conectada.\n\n## ✅ REGLAS BÁSICAS\n\n**SIEMPRE:**\n- Usa SOLO información de la base de datos vectorial\n- Sé preciso y directo en tus respuestas\n- Mantén un tono profesional y amigable\n- Responde en español\n\n**NUNCA:**\n- Inventes información que no esté en la base de datos\n- Hagas suposiciones o especules\n- Proporciones información inexacta\n\n## 💬 CÓMO RESPONDER\n\n**Si encuentras la información:**\n- Responde de forma clara y completa\n- Mantén la respuesta concisa (máximo 3 párrafos)\n- Usa la información exacta de la base de datos\n\n**Si NO encuentras la información:**\n\"Lo siento, no tengo esa información específica en mi base de conocimiento actual. \n\nPara obtener una respuesta precisa, te recomiendo:\n- Contactar directamente con el equipo de NOMBRE DE LA EMPRESA\n- Enviar tu consulta por email o a través de los canales oficiales\n\n¿Hay algo más sobre nuestros servicios en lo que pueda ayudarte?\"\n\n## 🕒 CONTEXTO\nFecha y hora actual: {{$now}}\n\n## 🎯 OBJETIVO\nProporcionar respuestas útiles y precisas sobre los servicios de NOMBRE DE LA EMPRESA basándote exclusivamente en la información almacenada en la base de datos vectorial.\n\n---\n**RECUERDA:** Es mejor admitir que no tienes una información específica que inventar una respuesta incorrecta."
+        }
+      },
+      "id": "0adc6409-b009-43d5-8828-25914f4dfe93",
+      "name": "Agente IA",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -32,
+        -224
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        32,
+        0
+      ],
+      "id": "4263752c-b26c-4f95-9747-4a7289a430c7",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "gw1DIZsRBRdKEE8k",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "🎯 CHATBOT FAQ CON RAG - FASE 1\n\nComponentes básicos:\n✅ Chat Trigger - Recibe mensajes\n✅ Agente IA - Responde preguntas\n✅ Vector Store - Base de FAQs\n✅ Memoria - Contexto conversación\n\nFlujo: Usuario → Pregunta → RAG → Respuesta FAQ",
+        "height": 320,
+        "width": 384
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -816,
+        -256
+      ],
+      "typeVersion": 1,
+      "id": "7f18992a-b38f-4fd0-ad24-6002c72c3fec",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Agente IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente IA",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Base de datos",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Base de datos",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Base de datos": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente IA",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        []
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agente IA",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c4864e9c-2001-460d-a0fb-2b80f6ea74d3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1dd96ec4a98bafef6f01ad4c816764c4030794a3ee889f31f15fd563495469e4"
+  },
+  "id": "m6BFgEef1BW9q5BR",
+  "tags": []
+}
